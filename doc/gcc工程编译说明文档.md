@@ -120,11 +120,11 @@
     --with-mpc-lib=/usr/lib/x86_64-linux-gnu/
     --with-isl-include=/usr/include/
     --with-isl-lib=/usr/lib/x86_64-linux-gnu/
-因为host系统都已经安装了gmp、mpfr、mpc、isl库（需要安装xxx-dev才能用来作为开发使用），因此这里需要指定这些库的路径以及头文件的路径。
+因为host系统都已经安装了gmp、mpfr、mpc、isl库（需要安装xxx-dev才能用来作为开发使用），因此这里需要指定这些库的路径以及头文件的路径。  
 通过命令“dkpg –L libgmp-dev” 可以获取这些库的头文件和安装目录。
 # 2、编译gcc工程
     make –j8
     make install
-在objdir目录中执行上述命令，完成编译和安装。
-make -j8命令负责编译，在objdir目录中生成的可执行文件和依赖的库。
+在objdir目录中执行上述命令，完成编译和安装。  
+make -j8命令负责编译，在objdir目录中生成的可执行文件和依赖的库。  
 make install命令负责安装，会将objdir目录中编译生成的可执行文件和依赖的库拷贝到resultdir目录（配置选项--prefix=resultdir）中去。
