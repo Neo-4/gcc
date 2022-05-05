@@ -4622,10 +4622,10 @@ process_command (unsigned int decoded_options_count,
 
   if (print_version)
     n_varsafe_options++;
-  
+
   if (print_help_list)
     n_varsafe_options++;
-  
+
   spec_undefvar_allowed = (n_varsafe_options == decoded_options_count - 1);
 
   alloc_switch ();
@@ -5902,7 +5902,7 @@ do_spec_1 (const char *spec, int inswitch, const char *soft_matched_part)
 		     "%{foo=*:bar%*}%{foo=*:one%*two}"
 
 		   matches -foo=hello then it will produce:
-		   
+
 		     barhello onehellotwo
 		*/
 		if (*p == 0 || *p == '}')
@@ -7224,7 +7224,13 @@ driver::main (int argc, char **argv)
 {
   bool early_exit;
 
-  set_progname (argv[0]);
+//  FILE *file;
+//  file = fopen("out.txt","a");
+//  fprintf(file, "argc=%d, strlen=%d\n", argc, strlen(argv[0]));
+//  fprintf(file,"%s\n", argv[0]);
+//  fclose(file);
+
+  set_progname (argv[0]); // 获取gcc程序名
   expand_at_files (&argc, &argv);
   decode_argv (argc, const_cast <const char **> (argv));
   global_initializations ();
@@ -7258,6 +7264,12 @@ driver::set_progname (const char *argv0) const
   while (p != argv0 && !IS_DIR_SEPARATOR (p[-1]))
     --p;
   progname = p;
+
+//  FILE *file;
+//  file = fopen("out.txt","a");
+//  fprintf(file, "strlen=%d\n", strlen(argv0));
+//  fprintf(file,"%s\n", progname);
+//  fclose(file);
 
   xmalloc_set_program_name (progname);
 }
@@ -9593,9 +9605,9 @@ static unsigned HOST_WIDE_INT
 get_random_number (void)
 {
   unsigned HOST_WIDE_INT ret = 0;
-  int fd; 
+  int fd;
 
-  fd = open ("/dev/urandom", O_RDONLY); 
+  fd = open ("/dev/urandom", O_RDONLY);
   if (fd >= 0)
     {
       read (fd, &ret, sizeof (HOST_WIDE_INT));
@@ -9897,16 +9909,16 @@ debug_level_greater_than_spec_func (int argc, const char **argv)
   return NULL;
 }
 
-/* Insert backslash before spaces in ORIG (usually a file path), to 
+/* Insert backslash before spaces in ORIG (usually a file path), to
    avoid being broken by spec parser.
 
    This function is needed as do_spec_1 treats white space (' ' and '\t')
    as the end of an argument. But in case of -plugin /usr/gcc install/xxx.so,
    the file name should be treated as a single argument rather than being
-   broken into multiple. Solution is to insert '\\' before the space in a 
+   broken into multiple. Solution is to insert '\\' before the space in a
    file name.
-   
-   This function converts and only converts all occurrence of ' ' 
+
+   This function converts and only converts all occurrence of ' '
    to '\\' + ' ' and '\t' to '\\' + '\t'.  For example:
    "a b"  -> "a\\ b"
    "a  b" -> "a\\ \\ b"

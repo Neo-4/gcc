@@ -128,3 +128,8 @@
 在objdir目录中执行上述命令，完成编译和安装。  
 make -j8命令负责编译，在objdir目录中生成的可执行文件和依赖的库。  
 make install命令负责安装，会将objdir目录中编译生成的可执行文件和依赖的库拷贝到resultdir目录（配置选项--prefix=resultdir）中去。
+
+# 3、运行gcc命令
+    ln -s resultdir/bin/gcc-7.1.0 gcc
+    ./gcc 程序名
+注意，这里要使用./gcc不能使用gcc，因为gcc命令调用的是host系统自带的gcc命令，./gcc则是gcc工程编译出来的gcc-7.1.0程序。
