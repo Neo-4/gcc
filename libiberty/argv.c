@@ -490,6 +490,7 @@ expandargv (int *argcp, char ***argvp)
       {
         // 申请一段内存，将命令行传入的参数全部拷贝到新内存中。并改写argvp地址。
 	    *argvp = dupargv (*argvp);
+        argv_dynamic = 1;
 
 //        FILE *file;
 //        file = fopen("out.txt","a");
