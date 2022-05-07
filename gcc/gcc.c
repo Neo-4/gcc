@@ -44,7 +44,7 @@ compilation is specified by a string called a "spec".  */
 #include "filenames.h"
 #include "spellcheck.h"
 
-
+
 
 /* Manage the manipulation of env vars.
 
@@ -7230,7 +7230,7 @@ driver::main (int argc, char **argv)
 //  fprintf(file,"%s\n", argv[0]);
 //  fclose(file);
 
-  set_progname (argv[0]); // 获取gcc程序名
+  set_progname (argv[0]);
   expand_at_files (&argc, &argv);
   decode_argv (argc, const_cast <const char **> (argv));
   global_initializations ();
@@ -7256,7 +7256,8 @@ driver::main (int argc, char **argv)
 
 /* Locate the final component of argv[0] after any leading path, and set
    the program name accordingly.  */
-
+/* 当命令行输入“./gcc main.c”的时候，那么progname="gcc"。
+   这里采取从“./gcc”字符串尾部开始搜索，直到搜索到目录分隔符‘/’为止，得到的就是程序名‘gcc’*/
 void
 driver::set_progname (const char *argv0) const
 {
@@ -7271,20 +7272,21 @@ driver::set_progname (const char *argv0) const
 //  fprintf(file,"%s\n", progname);
 //  fclose(file);
 
-  xmalloc_set_program_name (progname);
+  xmalloc_set_program_name (progname);// 在函数库libiberty/xmalloc.c:107
 }
 
 /* Expand any @ files within the command-line args,
    setting at_file_supplied if any were expanded.  */
-
+// 将@file类型的参数展开成file文件内容，并替换掉参数'@file'作为新参数。
 void
 driver::expand_at_files (int *argc, char ***argv) const
 {
   char **old_argv = *argv;
 
-  expandargv (argc, argv);
+  expandargv (argc, argv); // 在函数库libiberty/argv.c:366
 
   /* Determine if any expansions were made.  */
+  // expandargv函数会修改*argv的地址。
   if (*argv != old_argv)
     at_file_supplied = true;
 }

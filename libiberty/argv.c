@@ -73,10 +73,10 @@ dupargv (char * const *argv)
 {
   int argc;
   char **copy;
-  
+
   if (argv == NULL)
     return NULL;
-  
+
   /* the vector */
   for (argc = 0; argv[argc] != NULL; argc++);
   copy = (char **) xmalloc ((argc + 1) * sizeof (char *));
@@ -172,7 +172,7 @@ pointer, so it can be passed to @code{freeargv} at any time, or
 returned, as appropriate.
 
 */
-
+// 将文件中的内容，全部转成参数，存放到申请的argv[argc]中。
 char **buildargv (const char *input)
 {
   char *arg;
@@ -186,101 +186,113 @@ char **buildargv (const char *input)
   char **nargv;
 
   if (input != NULL)
-    {
-      copybuf = (char *) xmalloc (strlen (input) + 1);
+  {
+      copybuf = (char *) xmalloc(strlen(input) + 1);
+
       /* Is a do{}while to always execute the loop once.  Always return an
 	 argv, even for null strings.  See NOTES above, test case below. */
       do
-	{
-	  /* Pick off argv[argc] */
-	  consume_whitespace (&input);
+	  {
+	    /* Pick off argv[argc] */
+        // 将空格符丢掉，input指针将指向第一个非空格符的字符。
+	    consume_whitespace (&input);
 
-	  if ((maxargc == 0) || (argc >= (maxargc - 1)))
+        // 申请用于存放参数字符串地址的buffer。每申请一次，能存放8个char *地址。
+	    if ((maxargc == 0) || (argc >= (maxargc - 1)))
 	    {
 	      /* argv needs initialization, or expansion */
 	      if (argv == NULL)
-		{
-		  maxargc = INITIAL_MAXARGC;
-		  nargv = (char **) xmalloc (maxargc * sizeof (char *));
-		}
+		  {
+            // 首次申请
+		    maxargc = INITIAL_MAXARGC;
+		    nargv = (char **) xmalloc (maxargc * sizeof (char *));
+		  }
 	      else
-		{
-		  maxargc *= 2;
-		  nargv = (char **) xrealloc (argv, maxargc * sizeof (char *));
-		}
+		  {
+            // 8个参数地址空间已经用完，在原来的基础上再扩展8个
+		    maxargc *= 2;
+		    nargv = (char **) xrealloc (argv, maxargc * sizeof (char *));
+		  }
+
 	      argv = nargv;
 	      argv[argc] = NULL;
 	    }
-	  /* Begin scanning arg */
-	  arg = copybuf;
-	  while (*input != EOS)
+
+	    /* Begin scanning arg */
+	    arg = copybuf;
+	    while (*input != EOS)
 	    {
 	      if (ISSPACE (*input) && !squote && !dquote && !bsquote)
-		{
-		  break;
-		}
+		  {
+		    break; // 一个完整的参数已经扫描完毕，存放到copybuf中。
+		  }
 	      else
-		{
-		  if (bsquote)
+		  {
+		    if (bsquote)
 		    {
 		      bsquote = 0;
-		      *arg++ = *input;
+		      *arg++ = *input; // 将'\'符号后面的第一个字符存放到copybuf中
 		    }
-		  else if (*input == '\\')
+		    else if (*input == '\\')
 		    {
-		      bsquote = 1;
+		      bsquote = 1; // 识别到'\'符号，丢掉
 		    }
-		  else if (squote)
+		    else if (squote)
 		    {
 		      if (*input == '\'')
-			{
-			  squote = 0;
-			}
+			  {
+			    squote = 0;
+			  }
 		      else
-			{
-			  *arg++ = *input;
-			}
+			  {
+			    *arg++ = *input; // 将''之间的内容，全部放入copybuf中
+			  }
 		    }
-		  else if (dquote)
+		    else if (dquote)
 		    {
 		      if (*input == '"')
-			{
-			  dquote = 0;
-			}
+			  {
+			    dquote = 0;
+			  }
 		      else
-			{
-			  *arg++ = *input;
-			}
+			  {
+			    *arg++ = *input; // 将“”之间的内容，全部放入copybuf中。
+			  }
 		    }
-		  else
+		    else
 		    {
 		      if (*input == '\'')
-			{
-			  squote = 1;
-			}
+			  {
+			    squote = 1; // 识别到'''字符，丢掉
+			  }
 		      else if (*input == '"')
-			{
-			  dquote = 1;
-			}
+			  {
+			    dquote = 1; // 识别到'"'字符，丢掉
+			  }
 		      else
-			{
-			  *arg++ = *input;
-			}
+			  {
+			    *arg++ = *input;
+			  }
 		    }
-		  input++;
-		}
+
+		    input++;
+          }
 	    }
-	  *arg = EOS;
-	  argv[argc] = xstrdup (copybuf);
-	  argc++;
-	  argv[argc] = NULL;
 
-	  consume_whitespace (&input);
-	}
-      while (*input != EOS);
+	    *arg = EOS;
 
-      free (copybuf);
-    }
+        // 申请一段内存，把参数拷贝到申请的内存中。并将指针存放到argv数组中。
+	    argv[argc] = xstrdup (copybuf);
+	    argc++;
+	    argv[argc] = NULL;
+
+        // 将下一个参数之前的空格符丢掉，input指针将指向第一个非空格符的字符。
+	    consume_whitespace (&input);
+	}while (*input != EOS);
+
+    free (copybuf);
+  }
+
   return (argv);
 }
 
@@ -374,7 +386,7 @@ expandargv (int *argcp, char ***argvp)
   unsigned int iteration_limit = 2000;
   /* Loop over the arguments, handling response files.  We always skip
      ARGVP[0], as that is the name of the program being run.  */
-  while (++i < *argcp)
+    while (++i < *argcp) // 从第二个参数开始，因为第一个参数是程序名'./gcc'。
     {
       /* The name of the response file.  */
       const char *filename;
@@ -398,15 +410,20 @@ expandargv (int *argcp, char ***argvp)
       struct stat sb;
 #endif
       /* We are only interested in options of the form "@file".  */
+      // 获取第i个参数字符串的起始地址，比如'./gcc main.c'，i=1时filename='main.c'。
       filename = (*argvp)[i];
+
+      // 函数只对'@file'类型的参数进行处理。
       if (filename[0] != '@')
-	continue;
+        continue;
+
       /* If we have iterated too many times then stop.  */
+      // 最多支持处理2000个'@file'类型的参数。
       if (-- iteration_limit == 0)
-	{
-	  fprintf (stderr, "%s: error: too many @-files encountered\n", (*argvp)[0]);
-	  xexit (1);
-	}
+	  {
+	    fprintf (stderr, "%s: error: too many @-files encountered\n", (*argvp)[0]);
+	    xexit (1);
+	  }
 #ifdef S_ISDIR
       if (stat (filename+1, &sb) < 0)
 	continue;
@@ -417,63 +434,98 @@ expandargv (int *argcp, char ***argvp)
 	}
 #endif
       /* Read the contents of the file.  */
+      // 只读的方式打开文件
       f = fopen (++filename, "r");
+
+      // 打开文件失败
       if (!f)
-	continue;
+	    continue;
+
+      // 将文件指针跳转到文件的末尾
       if (fseek (f, 0L, SEEK_END) == -1)
-	goto error;
+	    goto error;
+
+      // 获取文件指针相对于文件起始的偏移位置
       pos = ftell (f);
+
       if (pos == -1)
-	goto error;
+	    goto error;
+
+      // 将文件指针跳转到文件的起始
       if (fseek (f, 0L, SEEK_SET) == -1)
-	goto error;
+	    goto error;
+
+      // 将文件内容全部读取出来，存放到buffer里面。
       buffer = (char *) xmalloc (pos * sizeof (char) + 1);
       len = fread (buffer, sizeof (char), pos, f);
+
+      // 文件内容读取失败
       if (len != (size_t) pos
 	  /* On Windows, fread may return a value smaller than POS,
 	     due to CR/LF->CR translation when reading text files.
 	     That does not in-and-of itself indicate failure.  */
 	  && ferror (f))
-	goto error;
+	    goto error;
+
       /* Add a NUL terminator.  */
       buffer[len] = '\0';
+
       /* If the file is empty or contains only whitespace, buildargv would
 	 return a single empty argument.  In this context we want no arguments,
 	 instead.  */
+	 // 判断文件的内容是不是空格符或者换行符
       if (only_whitespace (buffer))
-	{
-	  file_argv = (char **) xmalloc (sizeof (char *));
-	  file_argv[0] = NULL;
-	}
+	  {
+	    file_argv = (char **) xmalloc (sizeof (char *));
+	    file_argv[0] = NULL;
+	  }
       else
-	/* Parse the string.  */
-	file_argv = buildargv (buffer);
+      {
+	    /* Parse the string.  */
+	    file_argv = buildargv (buffer); // 解析文件内容，转成参数，存放起来。
+      }
+
       /* If *ARGVP is not already dynamically allocated, copy it.  */
       if (!argv_dynamic)
-	*argvp = dupargv (*argvp);
+      {
+        // 申请一段内存，将命令行传入的参数全部拷贝到新内存中。并改写argvp地址。
+	    *argvp = dupargv (*argvp);
+
+//        FILE *file;
+//        file = fopen("out.txt","a");
+//        fprintf(file, "argc=%x, file=%s\n", *argvp, filename);
+//        fclose(file);
+      }
+
       /* Count the number of arguments.  */
       file_argc = 0;
+
+      // 统计文件内容转成的参数个数。
       while (file_argv[file_argc])
-	++file_argc;
+	    ++file_argc;
+
       /* Now, insert FILE_ARGV into ARGV.  The "+1" below handles the
-	 NULL terminator at the end of ARGV.  */ 
-      *argvp = ((char **) 
-		xrealloc (*argvp, 
-			  (*argcp + file_argc + 1) * sizeof (char *)));
-      memmove (*argvp + i + file_argc, *argvp + i + 1, 
-	       (*argcp - i) * sizeof (char *));
-      memcpy (*argvp + i, file_argv, file_argc * sizeof (char *));
-      /* The original option has been replaced by all the new
-	 options.  */
+	 NULL terminator at the end of ARGV.  */
+	 // 扩展申请的内存大小，用来存放file_argv和argvp的所有参数。
+      *argvp = ((char **)xrealloc(*argvp, (*argcp + file_argc + 1) * sizeof (char *)));
+
+      // 将参数往后移file_argc - 1个参数位置。然后将file_argv的参数替换掉@file参数。
+      memmove(*argvp + i + file_argc, *argvp + i + 1, (*argcp - i) * sizeof (char *));
+      memcpy(*argvp + i, file_argv, file_argc * sizeof (char *));
+
+      /* The original option has been replaced by all the new options.  */
       *argcp += file_argc - 1;
+
       /* Free up memory allocated to process the response file.  We do
 	 not use freeargv because the individual options in FILE_ARGV
 	 are now in the main ARGV.  */
       free (file_argv);
       free (buffer);
+
       /* Rescan all of the arguments just read to support response
 	 files that include other response files.  */
       --i;
+
     error:
       /* We're all done with the file now.  */
       fclose (f);
@@ -516,7 +568,7 @@ static const char *const tests[] =
   "arg 'Jack said \\'hi\\'' has single quotes",
   "arg 'Jack said \\\"hi\\\"' has double quotes",
   "a b c d e f g h i j k l m n o p q r s t u v w x y z 1 2 3 4 5 6 7 8 9",
-  
+
   /* This should be expanded into only one argument.  */
   "trailing-whitespace ",
 
