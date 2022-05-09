@@ -4,3 +4,7 @@
     libiberty/xmalloc.c:107
 #### expandargv
     libiberty/argv.c:366
+#### gcc_assert
+    gcc/system.h:731
+#### fancy_abort
+    gcc/diagnostic.c:1459
