@@ -79,13 +79,23 @@ extern void add_params (const param_info params[], size_t n);
 extern void set_param_value (const char *name, int value,
 			     int *params, int *params_set);
 
-
 /* The parameters in use by language-independent code.  */
-
+/*
+    由params.def文件生成下列变量：
+    enum compiler_param
+    {
+        PARAM_PREDICTABLE_BRANCH_OUTCOME, // 0
+        PARAM_INLINE_MIN_SPEEDUP, //1
+        ...
+        PARAM_VECT_EPILOGUES_NOMASK,
+        LAST_PARAM
+    };
+*/
 enum compiler_param
 {
+/* params.list文件内容由params-list.h生成*/
 #include "params.list"
-  LAST_PARAM
+  LAST_PARAM // 197
 };
 
 extern bool find_param (const char *, enum compiler_param *);

@@ -39,6 +39,9 @@ static size_t num_compiler_params;
    default values determined.  */
 static bool params_finished;
 
+/* 由文件params.def生成下列变量：
+   static const char *values_PARAM_PARLOOPS_SCHEDULE[] = {"static", "dynamic", "guided", "auto", "runtime", NULL };
+*/
 #define DEFPARAM(ENUM, OPTION, HELP, DEFAULT, MIN, MAX)
 #define DEFPARAMENUM5(ENUM, OPTION, HELP, DEFAULT, V0, V1, V2, V3, V4)	\
   static const char *values_ ## ENUM [] = { #V0, #V1, #V2, #V3, #V4, NULL };
@@ -46,6 +49,18 @@ static bool params_finished;
 #undef DEFPARAMENUM5
 #undef DEFPARAM
 
+/* 由文件params.def生成下列变量：
+   lang_independent_params[] = {
+   {"predictable-branch-outcome", 2, 0, 50, "Maximal estimated outcome of branch considered predictable.", NULL},
+   ...
+   {"parloops-schedule", PARAM_PARLOOPS_SCHEDULE_KIND_static, 0, 4,
+    "Schedule type of omp schedule for loops parallelized by parloops (static, dynamic, guided, auto, runtime).",
+    values_PARAM_PARLOOPS_SCHEDULE},
+   ...
+   {"vect-epilogues-nomask", 0, 0, 1, "Enable loop epilogue vectorization using smaller vector size.", NULL},
+   { NULL, 0, 0, 0, NULL, NULL }
+   };
+*/
 static const param_info lang_independent_params[] = {
 #define DEFPARAM(ENUM, OPTION, HELP, DEFAULT, MIN, MAX) \
   { OPTION, DEFAULT, MIN, MAX, HELP, NULL },
@@ -65,7 +80,31 @@ add_params (const param_info params[], size_t n)
 {
   gcc_assert (!params_finished);
 
+//    int i;
+//    FILE *file;
+//    file = fopen("out.txt","a");
+//    fprintf(file, "into add_params\n");
+//
+//    fprintf(file, "display values_PARAM_PARLOOPS_SCHEDULE[] content:\n");
+//    for (i = 0; values_PARAM_PARLOOPS_SCHEDULE[i] != NULL; i++)
+//    {
+//        fprintf(file, "%d:%s\n", i, values_PARAM_PARLOOPS_SCHEDULE[i]);
+//    }
+//    fprintf(file, "\n");
+//
+//    fprintf(file, "display lang_independent_params[] content:\n");
+//    for (i = 0; lang_independent_params[i].option != NULL; i++)
+//    {
+//        fprintf(file, "%d:%s\n", i, lang_independent_params[i].option);
+//    }
+//    fprintf(file, "\n");
+//
+//    fprintf(file, "LAST_PARAM=%d, num_compiler_params=%d, \n", LAST_PARAM, num_compiler_params);
+//    fclose(file);
+
+
   /* Allocate enough space for the new parameters.  */
+  // num_compiler_params=0
   compiler_params = XRESIZEVEC (param_info, compiler_params,
 				num_compiler_params + n);
   /* Copy them into the table.  */
@@ -73,6 +112,7 @@ add_params (const param_info params[], size_t n)
 	  params,
 	  n * sizeof (param_info));
   /* Keep track of how many parameters we have.  */
+  // num_compiler_params = 197
   num_compiler_params += n;
 }
 
@@ -84,7 +124,10 @@ global_init_params (void)
 {
   gcc_assert (!params_finished);
 
+  // 把lang_independent_params[]结构体中的LAST_PARAM(197)个变量，全部拷贝到申请的内存compiler_params中去。
   add_params (lang_independent_params, LAST_PARAM);
+
+  //
   targetm_common.option_default_params ();
 }
 
