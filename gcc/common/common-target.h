@@ -66,6 +66,22 @@ struct default_options
 
 #include "common-target.def"
 
+/*
+此处根据target-hooks-macros.h和common-target.def展开得到：
+struct gcc_targetm_common {
+    bool (* handle_option) (struct gcc_options *opts, struct gcc_options *opts_set, const struct cl_decoded_option *decoded, location_t loc);
+    void (* option_init_struct) (struct gcc_options *opts);
+    const struct default_options * option_optimization_table;
+    void (* option_default_params) (void);
+    int default_target_flags;
+    enum unwind_info_type (* except_unwind_info) (struct gcc_options *opts);
+    bool (* supports_split_stack) (bool report, struct gcc_options *opts);
+    bool unwind_tables_default;
+    bool have_named_sections;
+    bool always_strip_dotdot;
+};
+*/
+
 extern struct gcc_targetm_common targetm_common;
 
 #endif /* GCC_C_TARGET_H */

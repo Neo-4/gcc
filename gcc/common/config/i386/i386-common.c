@@ -1230,4 +1230,76 @@ i386_except_unwind_info (struct gcc_options *opts)
 #undef TARGET_SUPPORTS_SPLIT_STACK
 #define TARGET_SUPPORTS_SPLIT_STACK ix86_supports_split_stack
 
+/*
+TARGETM_COMMON_INITIALIZER在编译过程中生成的gcc/common/common-target-hooks-def.h中定义，
+common-target-hooks-def.h文件的内容，根据common-target.def文件生成。
+比如：
+DEFHOOK (handle_option, "", bool, (struct gcc_options *opts, struct gcc_options *opts_set,
+	const struct cl_decoded_option *decoded, location_t loc), default_target_handle_option)
+
+生成：
+handle_option->TARGET_HANDLE_OPTION
+default_target_handle_option->default_target_handle_option
+
+最终得到的common-target-hooks-def.h文件内容如下：
+
+#ifndef TARGET_HANDLE_OPTION
+#define TARGET_HANDLE_OPTION default_target_handle_option
+#endif
+#ifndef TARGET_OPTION_INIT_STRUCT
+#define TARGET_OPTION_INIT_STRUCT hook_void_gcc_optionsp
+#endif
+#ifndef TARGET_OPTION_OPTIMIZATION_TABLE
+#define TARGET_OPTION_OPTIMIZATION_TABLE empty_optimization_table
+#endif
+#ifndef TARGET_OPTION_DEFAULT_PARAMS
+#define TARGET_OPTION_DEFAULT_PARAMS hook_void_void
+#endif
+#ifndef TARGET_DEFAULT_TARGET_FLAGS
+#define TARGET_DEFAULT_TARGET_FLAGS 0
+#endif
+#ifndef TARGET_EXCEPT_UNWIND_INFO
+#define TARGET_EXCEPT_UNWIND_INFO default_except_unwind_info
+#endif
+#ifndef TARGET_SUPPORTS_SPLIT_STACK
+#define TARGET_SUPPORTS_SPLIT_STACK hook_bool_bool_gcc_optionsp_false
+#endif
+#ifndef TARGET_UNWIND_TABLES_DEFAULT
+#define TARGET_UNWIND_TABLES_DEFAULT false
+#endif
+#ifndef TARGET_HAVE_NAMED_SECTIONS
+#define TARGET_HAVE_NAMED_SECTIONS true
+#endif
+#ifndef TARGET_ALWAYS_STRIP_DOTDOT
+#define TARGET_ALWAYS_STRIP_DOTDOT false
+#endif
+
+#define TARGETM_COMMON_INITIALIZER \
+  { \
+    TARGET_HANDLE_OPTION, \
+    TARGET_OPTION_INIT_STRUCT, \
+    TARGET_OPTION_OPTIMIZATION_TABLE, \
+    TARGET_OPTION_DEFAULT_PARAMS, \
+    TARGET_DEFAULT_TARGET_FLAGS, \
+    TARGET_EXCEPT_UNWIND_INFO, \
+    TARGET_SUPPORTS_SPLIT_STACK, \
+    TARGET_UNWIND_TABLES_DEFAULT, \
+    TARGET_HAVE_NAMED_SECTIONS, \
+    TARGET_ALWAYS_STRIP_DOTDOT, \
+  }
+
+展开后得到：
+{
+    ix86_handle_option,
+    ix86_option_init_struct,
+    ix86_option_optimization_table,
+    hook_void_void,
+    (TARGET_DEFAULT | TARGET_SUBTARGET_DEFAULT | TARGET_TLS_DIRECT_SEG_REFS_DEFAULT)
+    i386_except_unwind_info,
+    ix86_supports_split_stack,
+    false,
+    true,
+    false
+}
+*/
 struct gcc_targetm_common targetm_common = TARGETM_COMMON_INITIALIZER;

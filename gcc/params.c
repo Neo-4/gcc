@@ -127,7 +127,7 @@ global_init_params (void)
   // 把lang_independent_params[]结构体中的LAST_PARAM(197)个变量，全部拷贝到申请的内存compiler_params中去。
   add_params (lang_independent_params, LAST_PARAM);
 
-  //
+  // 在common/conmon-target.h中声明。钩子函数调用hook_void_void()，该函数为空函数，什么也不做。
   targetm_common.option_default_params ();
 }
 
