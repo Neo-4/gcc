@@ -27,9 +27,9 @@ fclose(file);
 
 ## 5、使用宏指令调试
 可以使用宏指令来debug宏定义。
-`#line 100 "test.c" // 将__FILE__和__LINE__宏定义，强行修改，此时配合printf打印__FILE__和__LINE__来debug`
-`#error this is falut // 当预处理执行到这里的时候，将会打印错误，并停止编译`
-`#warning this is warning // 当预处理执行到这里的时候，会输出warning信息`
+`#line 100 "test.c" // 将__FILE__和__LINE__宏定义，强行修改，此时配合printf打印__FILE__和__LINE__来debug`  
+`#error this is falut // 当预处理执行到这里的时候，将会打印错误，并停止编译`  
+`#warning this is warning // 当预处理执行到这里的时候，会输出warning信息`  
 
 ## 6、打印宏展开
 ```
