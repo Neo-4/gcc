@@ -234,7 +234,7 @@ add_comma_separated_to_vector (void **pvec, const char *arg)
   char *w;
   char *token_start;
   vec<char_p> *v = (vec<char_p> *) *pvec;
-  
+
   vec_check_alloc (v, 1);
 
   /* We never free this string.  */
@@ -272,6 +272,22 @@ add_comma_separated_to_vector (void **pvec, const char *arg)
 void
 init_opts_obstack (void)
 {
+//#define DEBUG_EXPAND_STRING(x) #x
+//#define DEBUG_STRING(x) DEBUG_EXPAND_STRING(x)
+//  FILE *file;
+//  file = fopen("out.txt", "a");
+//  fprintf(file,"the macro 'gcc_obstack_init' expand is:" DEBUG_STRING(gcc_obstack_init (&opts_obstack)) "\n");
+//  fclose(file);
+//#undef DEBUG_EXPAND_STRING
+
+  /* 展开得到：_obstack_begin (((&opts_obstack)), (memory_block_pool::block_size),
+    (0), (mempool_obstack_chunk_alloc), (mempool_obstack_chunk_free));
+
+    _obstack_begin()函数定义在gcc/libiberty/obstack.c:156
+
+    初始化：
+    opts_obstack->chunk
+  */
   gcc_obstack_init (&opts_obstack);
 }
 
@@ -2036,7 +2052,7 @@ common_handle_option (struct gcc_options *opts,
     case OPT_fdiagnostics_show_location_:
       diagnostic_prefixing_rule (dc) = (diagnostic_prefixing_rule_t) value;
       break;
- 
+
     case OPT_fdiagnostics_show_caret:
       dc->show_caret = value;
       break;
@@ -2295,7 +2311,7 @@ common_handle_option (struct gcc_options *opts,
         }
       else
         value = opts->x_dwarf_version;
-      
+
       /* FALLTHRU */
     case OPT_gdwarf_:
       if (value < 2 || value > 5)
@@ -2560,7 +2576,7 @@ set_debug_level (enum debug_info_type type, int extended, const char *arg,
 
   /* A debug flag without a level defaults to level 2.
      If off or at level 1, set it to level 2, but if already
-     at level 3, don't lower it.  */ 
+     at level 3, don't lower it.  */
   if (*arg == '\0')
     {
       if (opts->x_debug_info_level < DINFO_LEVEL_NORMAL)

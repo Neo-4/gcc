@@ -24,3 +24,18 @@ fclose(file);
 1、想要确定gcc\common\config下哪个目录下的文件，只要查看编译的时候，调用的是哪个目录下的.c文件即可。  
 `gcc/common/config/i386/i386-common.c`  
 那么就可以确认，是使用的i386目录下的。  
+
+## 5、使用宏指令调试
+可以使用宏指令来debug宏定义。
+`#line 100 "test.c" // 将__FILE__和__LINE__宏定义，强行修改，此时配合printf打印__FILE__和__LINE__来debug`
+`#error this is falut // 当预处理执行到这里的时候，将会打印错误，并停止编译`
+`#warning this is warning // 当预处理执行到这里的时候，会输出warning信息`
+
+## 6、打印宏展开
+```
+#define MACRO_STRING(x) #x
+#define MACRO_EXPAND(x) MACRO_STRING(x)
+#define FUNC(a,b) (a) + (b)
+
+printf(MACRO_EXPAND(FUNC(5,5)));
+```

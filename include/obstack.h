@@ -198,7 +198,7 @@ struct obstack          /* control current object in current chunk */
 };
 
 /* Declare the external functions we use; they are in obstack.c.  */
-
+// 声明外部函数，下面的这些外部函数，定义在gcc/libiberty/obstack.c文件中
 extern void _obstack_newchunk (struct obstack *, _OBSTACK_SIZE_T);
 extern void _obstack_free (struct obstack *, void *);
 extern int _obstack_begin (struct obstack *,

@@ -278,6 +278,7 @@ typedef const struct basic_block_def *const_basic_block;
 # define obstack_chunk_free     free
 #endif
 
+// 展开得到_obstack_begin ((OBSTACK), (memory_block_pool::block_size), (0), (mempool_obstack_chunk_alloc), (mempool_obstack_chunk_free))
 #define gcc_obstack_init(OBSTACK)				\
   obstack_specify_allocation ((OBSTACK), OBSTACK_CHUNK_SIZE, 0,	\
 			      obstack_chunk_alloc,		\
@@ -362,7 +363,7 @@ typedef unsigned char uchar;
 #if !defined (GENERATOR_FILE) && !defined (USED_FOR_TARGET)
 #include "machmode.h"
 #include "signop.h"
-#include "wide-int.h" 
+#include "wide-int.h"
 #include "double-int.h"
 #include "real.h"
 #include "fixed-value.h"

@@ -30,7 +30,10 @@
         true,
         false
     }
-    
+### obstack
+    定义：include/obstack.h:163
+#### opts_obstack
+    定义：opts-common.c:774
     
     
 

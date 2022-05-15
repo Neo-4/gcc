@@ -8,3 +8,7 @@
     gcc/system.h:731
 #### fancy_abort
     gcc/diagnostic.c:1459
+#### obstack_specify_allocation
+    include/obstack.h:253
+#### _obstack_begin
+    gcc/libiberty/obstack.c:156
