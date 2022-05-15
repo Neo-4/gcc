@@ -285,8 +285,23 @@ init_opts_obstack (void)
 
     _obstack_begin()函数定义在gcc/libiberty/obstack.c:156
 
-    初始化：
-    opts_obstack->chunk
+    初始化opts_obstack：
+    chunk_size = (64 * 1024);
+    chunk = mempool_obstack_chunk_alloc(64 * 1024);
+        chunk->limit = (char *)chunk + chunk_size;
+        chunk->prev = 0;
+    object_base = chunk->contents;
+    next_free = chunk->contents;
+    chunk_limit=(char *)chunk + chunk_size;
+    temp = 未初始化;
+    alignment_mask = 0xffffffff;
+    chunkfun = mempool_obstack_chunk_alloc;
+    freefun = mempool_obstack_chunk_free;
+    extra_arg; // 因为use_extra_arg=0,所以，这里没有初始化。
+    use_extra_arg = 0;
+    mabe_empty_object = 0;
+    alloc_failed = 0;
+
   */
   gcc_obstack_init (&opts_obstack);
 }
@@ -302,6 +317,10 @@ init_options_struct (struct gcc_options *opts, struct gcc_options *opts_set)
      that we initialize any gcc_options instances (PR jit/68446).  */
   gcc_assert (opts_obstack.chunk_size > 0);
 
+  /*
+    将*opt结构体的内容初始化成结构体变量global_options_init的内容。
+    global_options_init在gcc/options.c文件中，编译gcc工程自动生成的，源码中没有，需要到编译目录下面去找。
+  */
   *opts = global_options_init;
 
   if (opts_set)

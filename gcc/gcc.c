@@ -7301,7 +7301,13 @@ driver::decode_argv (int argc, const char **argv)
   global_init_params ();
   finish_params ();
 
+  // 对变量opts_obstack申请内存，初始化。
   init_opts_obstack ();
+
+  /* 对global_options和global_options_set进行初始化。
+    这两个变量，在gcc/options.c文件中。
+    gcc/options.c文件是编译gcc工程自动生成的，源码中没有，需要到编译目录下面去找。
+  */
   init_options_struct (&global_options, &global_options_set);
 
   decode_cmdline_options_to_array (argc, argv,

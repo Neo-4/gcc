@@ -34,6 +34,14 @@
     定义：include/obstack.h:163
 #### opts_obstack
     定义：opts-common.c:774
-    
+### gcc_options
+    定义：gcc/options.h:13
+    gcc/options.h是编译gcc工程过程中生成的。在源码目录中，并不存在。
+#### global_options
+    定义：gcc/options.c:1972
+#### global_options_set
+    定义：gcc/options.c:1973
+#### global_options_init
+    定义：gcc/options.c:1096
     
 
