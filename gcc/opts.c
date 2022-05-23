@@ -331,6 +331,7 @@ init_options_struct (struct gcc_options *opts, struct gcc_options *opts_set)
   if (opts_set)
     opts_set->x_param_values = XCNEWVEC (int, num_params);
 
+  // 这里将等于lang_independent_params[]的default_value
   init_param_values (opts->x_param_values);
 
   /* Initialize whether `char' is signed.  */
@@ -341,12 +342,15 @@ init_options_struct (struct gcc_options *opts, struct gcc_options *opts_set)
 
   /* Initialize target_flags before default_options_optimization
      so the latter can modify it.  */
+  // 初始化为(TARGET_DEFAULT | TARGET_SUBTARGET_DEFAULT | TARGET_TLS_DIRECT_SEG_REFS_DEFAULT)
   opts->x_target_flags = targetm_common.default_target_flags;
 
   /* Some targets have ABI-specified unwind tables.  */
+  // 初始化为false
   opts->x_flag_unwind_tables = targetm_common.unwind_tables_default;
 
   /* Some targets have other target-specific initialization.  */
+  // 调用ix86_option_init_struct()函数
   targetm_common.option_init_struct (opts);
 }
 

@@ -7310,9 +7310,11 @@ driver::decode_argv (int argc, const char **argv)
   */
   init_options_struct (&global_options, &global_options_set);
 
-  decode_cmdline_options_to_array (argc, argv,
-				   CL_DRIVER,
-				   &decoded_options, &decoded_options_count);
+  /*
+    申请一块内存，内存地址存放在decoded_options，并把所有命令行传入的参数解析后存放到申请的内存中。
+    注意，这里的参数，是扩展了@file之后的参数。
+  */
+  decode_cmdline_options_to_array (argc, argv, CL_DRIVER, &decoded_options, &decoded_options_count);
 }
 
 /* Perform various initializations and setup.  */
